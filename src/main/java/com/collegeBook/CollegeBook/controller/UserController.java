@@ -35,4 +35,5 @@ public class UserController extends BaseController {
     public ResponseEntity<GlobalApiResponse> deleteUser(@PathVariable String username){
         return successResponse(StringConstant.USER_DELETED,userService.deleteUser(username));
     }
+
 }

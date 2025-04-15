@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Post {
+public class Posts {
 
     @Id
     @SequenceGenerator(name = "post_seq_gen", sequenceName = "posts_seq", allocationSize = 1)

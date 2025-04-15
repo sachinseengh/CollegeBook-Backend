@@ -5,6 +5,7 @@ import com.collegeBook.CollegeBook.exception.AppException;
 import com.collegeBook.CollegeBook.pojo.auth.SignInRequest;
 import com.collegeBook.CollegeBook.pojo.auth.SignUpRequest;
 import com.collegeBook.CollegeBook.pojo.user.ChangePasswordReq;
+import com.collegeBook.CollegeBook.pojo.user.UserResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -16,7 +17,7 @@ public interface UserService {
 
     String  signIn(@Valid SignInRequest signInRequest);
 
-    User getUser(@PathVariable String username);
+    UserResponse getUser(@PathVariable String username);
 
     String changePassword(String username, ChangePasswordReq changePasswordReq);
 

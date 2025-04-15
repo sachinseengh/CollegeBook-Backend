@@ -35,7 +35,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Post> posts = new ArrayList<>();
+    private List<Posts> posts = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(

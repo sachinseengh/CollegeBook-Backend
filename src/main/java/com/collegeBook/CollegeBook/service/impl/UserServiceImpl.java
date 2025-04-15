@@ -6,13 +6,16 @@ import com.collegeBook.CollegeBook.exception.AppException;
 import com.collegeBook.CollegeBook.pojo.auth.SignInRequest;
 import com.collegeBook.CollegeBook.pojo.auth.SignUpRequest;
 import com.collegeBook.CollegeBook.pojo.user.ChangePasswordReq;
+import com.collegeBook.CollegeBook.pojo.user.UserResponse;
 import com.collegeBook.CollegeBook.repository.RoleRepository;
 import com.collegeBook.CollegeBook.repository.UserRepository;
 import com.collegeBook.CollegeBook.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -52,10 +55,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(String username) {
+    public UserResponse getUser(String username) {
 
-        Optional<User> user = userRepository.findByUserName(username);
-        return user.orElse(null);
+        User user = userRepository.findByUserName(username).orElseThrow(()->new AppException("User not found"));
+
+        List<String> roles = user.getRoles().stream().map(role->role.getName()).collect(Collectors.toList());
+        return new UserResponse(user.getFirstName(),user.getLastName(),user.getUserName(),roles);
     }
 
     @Override

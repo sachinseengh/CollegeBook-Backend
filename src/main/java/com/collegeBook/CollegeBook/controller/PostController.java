@@ -26,6 +26,12 @@ public class PostController extends BaseController{
         return successResponse(StringConstant.POST_CREATED,postService.createPost(username,createPostReq));
     }
 
+    @GetMapping("/getAllPosts")
+    public ResponseEntity<GlobalApiResponse> getAllPosts(){
+        return successResponse(StringConstant.ALL_POSTS,postService.getAllPosts());
+    }
+
+
     @PostMapping("/edit/{username}/{postId}")
     public ResponseEntity<GlobalApiResponse> editPost(@RequestBody @Valid EditPostReq editPostReq, @PathVariable Long postId, @PathVariable String username){
         return successResponse(StringConstant.POST_UPDATED,postService.editPost(username,editPostReq,postId));

@@ -6,6 +6,8 @@ import com.collegeBook.CollegeBook.entity.User;
 import com.collegeBook.CollegeBook.exception.AppException;
 import com.collegeBook.CollegeBook.pojo.post.CreatePostReq;
 import com.collegeBook.CollegeBook.pojo.post.EditPostReq;
+import com.collegeBook.CollegeBook.pojo.post.PostResponse;
+import com.collegeBook.CollegeBook.pojo.user.UserResponse;
 import com.collegeBook.CollegeBook.repository.PostRepository;
 import com.collegeBook.CollegeBook.repository.UserRepository;
 import com.collegeBook.CollegeBook.service.PostService;
@@ -14,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -68,6 +72,25 @@ public class PostServiceImpl implements PostService {
         post.setUser(null);
         userRepository.save(user);
         return StringConstant.POST_DELETED;
+    }
+
+    @Override
+    public List<PostResponse> getAllPosts() {
+
+        List<Posts> posts = postRepository.findAll();
+
+        List<PostResponse> responses = new ArrayList<>();
+
+        for(Posts post: posts){
+
+            List<String> roles = post.getUser().getRoles().stream().map(role->role.getName()).collect(Collectors.toList());
+
+            UserResponse userResponse = new UserResponse(post.getUser()
+                    .getId(),post.getUser().getFirstName(),post.getUser().getLastName(),post.getUser().getUserName(),roles);
+
+            responses.add(new PostResponse(post.getId(),post.getCaption(),post.getContent(),post.getDate(),userResponse));
+        }
+        return responses;
     }
 
 

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.validation.Valid;
+import java.util.List;
 
 public interface UserService {
 
@@ -22,4 +23,14 @@ public interface UserService {
     String changePassword(String username, ChangePasswordReq changePasswordReq);
 
     String deleteUser(String username);
+
+    List<UserResponse> getUsers();
+
+    String makeModerator(String username);
+
+    String removeModerator(String username);
+
+    List<UserResponse> getModerators(String roleName);
+
+
 }

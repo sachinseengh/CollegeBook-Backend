@@ -8,6 +8,7 @@ import com.collegeBook.CollegeBook.repository.RoleRepository;
 import com.collegeBook.CollegeBook.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,6 +19,10 @@ public class DataLoader implements CommandLineRunner {
     private RoleRepository roleRepository;
     @Autowired
     private UserRepository userRepository;
+
+
+    @Autowired
+   private PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -46,7 +51,8 @@ public class DataLoader implements CommandLineRunner {
             user.setFirstName("Sachin");
             user.setLastName("Singh");
             user.setUserName("sachin");
-            user.setPassword("sachin");
+            String password = passwordEncoder.encode("sachin");
+            user.setPassword(password);
             user.getRoles().add(role);
             userRepository.save(user);
         }

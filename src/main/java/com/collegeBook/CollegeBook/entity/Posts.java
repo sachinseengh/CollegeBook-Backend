@@ -26,6 +26,7 @@ public class Posts {
 
     private String content;
 
+
     private LocalDateTime date;
 
     @ManyToOne

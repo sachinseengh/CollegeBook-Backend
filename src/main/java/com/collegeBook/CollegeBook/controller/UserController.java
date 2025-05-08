@@ -21,14 +21,14 @@ public class UserController extends BaseController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/{username}")
-    public ResponseEntity<GlobalApiResponse> getUser(@PathVariable String username){
-        return successResponse(StringConstant.USER_DETAILS,userService.getUser(username));
+    @GetMapping("/me")
+    public ResponseEntity<GlobalApiResponse> getUser(){
+        return successResponse(StringConstant.USER_DETAILS,userService.getUser());
     }
 
-    @PostMapping("/changePassword/{username}")
-    public ResponseEntity<GlobalApiResponse> changePassword(@PathVariable String username,@RequestBody ChangePasswordReq changePasswordReq){
-        return successResponse(StringConstant.PASSWORD_CHANGED,userService.changePassword(username,changePasswordReq));
+    @PostMapping("/changePassword")
+    public ResponseEntity<GlobalApiResponse> changePassword(@RequestBody ChangePasswordReq changePasswordReq){
+        return successResponse(StringConstant.PASSWORD_CHANGED,userService.changePassword(changePasswordReq));
     }
 
     @DeleteMapping("/delete/{username}")

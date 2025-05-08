@@ -13,8 +13,12 @@ import com.collegeBook.CollegeBook.repository.UserRepository;
 import com.collegeBook.CollegeBook.service.PostService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +32,12 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private PostRepository postRepository;
 
+
+    @Transactional
     @Override
-    public String createPost(String username, CreatePostReq createPostReq) {
+    public String createPost( CreatePostReq createPostReq) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Posts post = new Posts();
         post.setCaption(createPostReq.getCaption());
         if(createPostReq.getContent() != null || createPostReq.getContent() == ""){
@@ -37,7 +45,7 @@ public class PostServiceImpl implements PostService {
         }else{
             post.setCaption(null);
         }
-        User user = userRepository.findByUserName(username).orElseThrow(()->new AppException("User not Found"));
+        User user = userRepository.findByUserName(authentication.getName()).orElseThrow(()->new AppException("User not Found"));
         post.setUser(user);
         post.setDate(LocalDateTime.now());
         postRepository.save(post);
@@ -45,9 +53,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public String editPost(String username, EditPostReq editPostReq, Long post_id) {
+    public String editPost( EditPostReq editPostReq, Long post_id) {
 
-        User user = userRepository.findByUserName(username).orElseThrow(()->new AppException("User not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        User user = userRepository.findByUserName(authentication.getName()).orElseThrow(()->new AppException("User not found"));
         Posts post = (Posts) user.getPosts().stream().filter(x->x.getId().equals(post_id)).findFirst().orElseThrow(()->new AppException("Post not found"));
 
         if(editPostReq.getContent()!=null || editPostReq.getContent()==""){
@@ -62,9 +72,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public String deletePost(String username, Long post_id) {
+    public String deletePost( Long post_id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        User user = userRepository.findByUserName(username).orElseThrow(()->new AppException("Username not found"));
+        User user = userRepository.findByUserName(authentication.getName()).orElseThrow(()->new AppException("Username not found"));
 
         Posts post =user.getPosts().stream().filter(x->x.getId().equals(post_id)).findFirst().orElseThrow(()->new AppException("Post not found"));
 
@@ -74,14 +85,35 @@ public class PostServiceImpl implements PostService {
         return StringConstant.POST_DELETED;
     }
 
+
     @Override
     public List<PostResponse> getAllPosts() {
 
-        List<Posts> posts = postRepository.findAll();
+        List<Posts> posts = postRepository.getPosts();
 
         List<PostResponse> responses = new ArrayList<>();
 
         for(Posts post: posts){
+
+            List<String> roles = post.getUser().getRoles().stream().map(role->role.getName()).collect(Collectors.toList());
+
+            UserResponse userResponse = new UserResponse(post.getUser()
+                    .getId(),post.getUser().getFirstName(),post.getUser().getLastName(),post.getUser().getUserName(),roles);
+
+            responses.add(new PostResponse(post.getId(),post.getCaption(),post.getContent(),post.getDate(),userResponse));
+        }
+        return responses;
+    }
+
+    @Override
+    public List<PostResponse> getUserPost(@PathVariable String username) {
+
+        User user = userRepository.findByUserName(username).orElseThrow(()->new AppException("User not found"));
+
+        List<Posts> posts = postRepository.findAllByUserOrderByDateDesc(user);
+        List<PostResponse> responses = new ArrayList<>();
+
+        for(Posts post:posts){
 
             List<String> roles = post.getUser().getRoles().stream().map(role->role.getName()).collect(Collectors.toList());
 

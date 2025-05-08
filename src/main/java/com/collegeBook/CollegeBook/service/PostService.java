@@ -11,8 +11,9 @@ import java.util.List;
 
 public interface PostService {
 
-    String createPost(String username, @RequestBody @Valid CreatePostReq createPostReq);
-    String editPost(String username, @RequestBody @Valid EditPostReq editPostReq, Long post_id);
-    String deletePost(String username,@PathVariable Long post_id);
+    String createPost( @RequestBody @Valid CreatePostReq createPostReq);
+    String editPost( @RequestBody @Valid EditPostReq editPostReq, Long post_id);
+    String deletePost(@PathVariable Long post_id);
     List<PostResponse> getAllPosts();
+    List<PostResponse> getUserPost(@PathVariable String username);
 }

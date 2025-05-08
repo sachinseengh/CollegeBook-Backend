@@ -31,6 +31,6 @@ public class ModeratorController extends BaseController {
 
     @DeleteMapping("/delete/delete-post/{username}/{post_id}")
     public ResponseEntity<GlobalApiResponse> deletePost(@PathVariable String username,Long post_id){
-        return successResponse(StringConstant.POST_DELETED,postService.deletePost(username,post_id));
+        return successResponse(StringConstant.POST_DELETED,postService.deletePost(post_id));
     }
 }

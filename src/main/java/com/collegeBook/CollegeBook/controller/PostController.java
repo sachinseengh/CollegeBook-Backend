@@ -21,9 +21,9 @@ public class PostController extends BaseController{
     @Autowired
     private UserService userService;
 
-    @PostMapping("/create/{username}")
-    public ResponseEntity<GlobalApiResponse> createPost(@RequestBody @Valid CreatePostReq createPostReq, @PathVariable String username){
-        return successResponse(StringConstant.POST_CREATED,postService.createPost(username,createPostReq));
+    @PostMapping("/create/")
+    public ResponseEntity<GlobalApiResponse> createPost(@RequestBody @Valid CreatePostReq createPostReq){
+        return successResponse(StringConstant.POST_CREATED,postService.createPost(createPostReq));
     }
 
     @GetMapping("/getAllPosts")
@@ -32,17 +32,21 @@ public class PostController extends BaseController{
     }
 
 
-    @PostMapping("/edit/{username}/{postId}")
-    public ResponseEntity<GlobalApiResponse> editPost(@RequestBody @Valid EditPostReq editPostReq, @PathVariable Long postId, @PathVariable String username){
-        return successResponse(StringConstant.POST_UPDATED,postService.editPost(username,editPostReq,postId));
+    @PutMapping("/edit/{postId}")
+    public ResponseEntity<GlobalApiResponse> editPost(@RequestBody @Valid EditPostReq editPostReq, @PathVariable Long postId){
+        return successResponse(StringConstant.POST_UPDATED,postService.editPost(editPostReq,postId));
     }
 
-    @DeleteMapping("/delete/{username}/{id}")
-    public ResponseEntity<GlobalApiResponse> deletePost(@PathVariable String username,@PathVariable Long id){
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<GlobalApiResponse> deletePost(@PathVariable Long id){
 
-        return successResponse(StringConstant.POST_DELETED,postService.deletePost(username,id));
+        return successResponse(StringConstant.POST_DELETED,postService.deletePost(id));
     }
 
+    @GetMapping("/getUserPost/{username}")
+    public ResponseEntity<GlobalApiResponse> getUserPosts(@PathVariable String username){
+        return successResponse(StringConstant.USER_POST,postService.getUserPost(username));
+    }
 
 
 }

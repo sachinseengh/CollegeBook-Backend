@@ -1,5 +1,0 @@
-spring.application.name=CollegeBook
-
-spring.datasource.url=jdbc:postgresql://localhost:5432/CollegeBook
-spring.datasource.username=postgres
-spring.datasource.password=postgres

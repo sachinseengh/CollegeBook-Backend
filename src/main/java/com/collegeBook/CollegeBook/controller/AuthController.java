@@ -4,13 +4,14 @@ package com.collegeBook.CollegeBook.controller;
 import com.collegeBook.CollegeBook.constant.StringConstant;
 import com.collegeBook.CollegeBook.pojo.GlobalApiResponse;
 import com.collegeBook.CollegeBook.pojo.auth.SignInRequest;
-import com.collegeBook.CollegeBook.pojo.auth.SignInResponse;
 import com.collegeBook.CollegeBook.pojo.auth.SignUpRequest;
 import com.collegeBook.CollegeBook.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 

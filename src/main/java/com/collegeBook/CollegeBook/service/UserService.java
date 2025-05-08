@@ -18,9 +18,9 @@ public interface UserService {
 
     String  signIn(@Valid SignInRequest signInRequest);
 
-    UserResponse getUser(@PathVariable String username);
+    UserResponse getUser();
 
-    String changePassword(String username, ChangePasswordReq changePasswordReq);
+    String changePassword(ChangePasswordReq changePasswordReq);
 
     String deleteUser(String username);
 

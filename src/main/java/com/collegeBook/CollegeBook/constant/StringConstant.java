@@ -19,4 +19,10 @@ public class StringConstant {
     public static final String REMOVE_MODERATOR ="Moderator Removed" ;
     public static final String MADE_MODERATOR ="Made Moderator" ;
     public static final String GET_MODERATOR ="Get Moderator" ;
+    public static final String USER_POST ="User Post" ;
+    public static final String INVALID_CREDENTIALS = "Incorrect Username or Password";
+    public static final String USER_NOT_FOUND = "User not Found";
+    public static final String APP_EXCEPTION ="App Exception" ;
+    public static final String ALREADY_MODERATOR = "User is Already a Moderator";
+    public static final String VALIDATION_EXCEPTION ="Validation Exception";
 }

@@ -17,11 +17,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,23 +43,34 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     @Override
-    public String createPost( CreatePostReq createPostReq) {
-
+    public String createPost(MultipartFile file, CreatePostReq createPostReq) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         Posts post = new Posts();
         post.setCaption(createPostReq.getCaption());
-        if(createPostReq.getContent() != null || createPostReq.getContent() == ""){
-            post.setContent(createPostReq.getContent());
-        }else{
-            post.setCaption(null);
+        post.setContent(createPostReq.getContent());
+
+
+        if (file != null && !file.isEmpty()) {
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path uploadPath = Paths.get("uploads/");
+            Files.createDirectories(uploadPath);
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            post.setFileName(fileName);
+            post.setFileType(file.getContentType()); // Save file type
         }
-        User user = userRepository.findByUserName(authentication.getName()).orElseThrow(()->new AppException("User not Found"));
+
+        User user = userRepository.findByUserName(authentication.getName())
+                .orElseThrow(() -> new AppException("User not Found"));
+
         post.setUser(user);
         post.setDate(LocalDateTime.now());
         postRepository.save(post);
+
         return StringConstant.POST_CREATED;
     }
-
     @Override
     public String editPost( EditPostReq editPostReq, Long post_id) {
 
@@ -100,7 +119,18 @@ public class PostServiceImpl implements PostService {
             UserResponse userResponse = new UserResponse(post.getUser()
                     .getId(),post.getUser().getFirstName(),post.getUser().getLastName(),post.getUser().getUserName(),roles);
 
-            responses.add(new PostResponse(post.getId(),post.getCaption(),post.getContent(),post.getDate(),userResponse));
+            String fileUrl = null;
+            String fileType = null;
+            if (post.getFileName() != null) {
+                fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .path("/uploads/")
+                        .path(post.getFileName())
+                        .toUriString();
+                fileType= post.getFileType();
+
+            }
+
+            responses.add(new PostResponse(post.getId(),post.getCaption(),post.getContent(),post.getDate(),userResponse,fileUrl,fileType));
         }
         return responses;
     }
@@ -120,7 +150,17 @@ public class PostServiceImpl implements PostService {
             UserResponse userResponse = new UserResponse(post.getUser()
                     .getId(),post.getUser().getFirstName(),post.getUser().getLastName(),post.getUser().getUserName(),roles);
 
-            responses.add(new PostResponse(post.getId(),post.getCaption(),post.getContent(),post.getDate(),userResponse));
+            String fileUrl = null;
+            String fileType=null;
+            if (post.getFileName() != null) {
+                fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .path("/uploads/")
+                        .path(post.getFileName())
+                        .toUriString();
+                fileType=post.getFileType();
+            }
+
+            responses.add(new PostResponse(post.getId(),post.getCaption(),post.getContent(),post.getDate(),userResponse, fileUrl,fileType));
         }
         return responses;
     }

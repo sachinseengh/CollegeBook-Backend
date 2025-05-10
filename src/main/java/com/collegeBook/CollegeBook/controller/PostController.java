@@ -9,8 +9,10 @@ import com.collegeBook.CollegeBook.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/post")
@@ -22,9 +24,13 @@ public class PostController extends BaseController{
     private UserService userService;
 
     @PostMapping("/create/")
-    public ResponseEntity<GlobalApiResponse> createPost(@RequestBody @Valid CreatePostReq createPostReq){
-        return successResponse(StringConstant.POST_CREATED,postService.createPost(createPostReq));
+    public ResponseEntity<GlobalApiResponse> createPost(
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @ModelAttribute @Valid CreatePostReq createPostReq
+    ) throws IOException {
+        return successResponse(StringConstant.POST_CREATED, postService.createPost(file, createPostReq));
     }
+
 
     @GetMapping("/getAllPosts")
     public ResponseEntity<GlobalApiResponse> getAllPosts(){

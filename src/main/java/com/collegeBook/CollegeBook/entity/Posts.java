@@ -27,6 +27,10 @@ public class Posts {
     private String content;
 
 
+
+    private String fileName;   // Stored file name on server
+    private String fileType;   // Like image/png, video/mp4
+
     private LocalDateTime date;
 
     @ManyToOne

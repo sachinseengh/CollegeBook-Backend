@@ -18,4 +18,7 @@ public class PostResponse {
     private LocalDateTime date;
     private UserResponse userResponse;
 
+    private String fileUrl;
+    private String fileType;
+
 }

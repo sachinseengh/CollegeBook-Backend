@@ -36,6 +36,7 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+                .antMatchers("/uploads/**").permitAll()
                 .antMatchers("/auth/**").permitAll() // public endpoints like login/register
                 .antMatchers("/admin/**").hasRole(RoleEnum.ADMIN.name())
                 .antMatchers("/moderator/**").hasAnyRole(RoleEnum.ADMIN.name(),RoleEnum.MODERATOR.name())// restrict admin routes

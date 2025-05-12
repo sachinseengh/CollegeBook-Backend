@@ -38,6 +38,7 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/uploads/**").permitAll()
                 .antMatchers("/auth/**").permitAll() // public endpoints like login/register
+                .antMatchers("/health-check").permitAll()
                 .antMatchers("/admin/**").hasRole(RoleEnum.ADMIN.name())
                 .antMatchers("/moderator/**").hasAnyRole(RoleEnum.ADMIN.name(),RoleEnum.MODERATOR.name())// restrict admin routes
                 .antMatchers("/user/**", "/post/**").authenticated() // only for logged-in users

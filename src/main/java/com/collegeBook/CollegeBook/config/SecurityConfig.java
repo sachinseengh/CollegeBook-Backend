@@ -58,7 +58,8 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+//            config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+            config.setAllowedOrigins(Collections.singletonList("https://college-book.vercel.app/"));
             config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Specify allowed methods
             config.setAllowCredentials(true);
             config.setAllowedHeaders(Collections.singletonList("*"));

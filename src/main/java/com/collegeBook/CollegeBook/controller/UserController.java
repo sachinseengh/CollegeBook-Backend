@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
+
 @RestController
 @RequestMapping("/user")
 public class UserController extends BaseController {
@@ -21,6 +23,7 @@ public class UserController extends BaseController {
     @Autowired
     private UserRepository userRepository;
 
+    @Transactional
     @GetMapping("/me")
     public ResponseEntity<GlobalApiResponse> getUser(){
         return successResponse(StringConstant.USER_DETAILS,userService.getUser());

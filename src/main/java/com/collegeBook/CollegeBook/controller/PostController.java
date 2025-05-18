@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;
 
@@ -32,6 +33,7 @@ public class PostController extends BaseController{
     }
 
 
+    @Transactional
     @GetMapping("/getAllPosts")
     public ResponseEntity<GlobalApiResponse> getAllPosts(){
         return successResponse(StringConstant.ALL_POSTS,postService.getAllPosts());

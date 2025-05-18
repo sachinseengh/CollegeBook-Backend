@@ -15,7 +15,7 @@ public interface PostRepository extends JpaRepository<Posts,Long> {
   Optional<List<Posts>> findAllByUser(User user);
 
   @Query(value="select * from posts p order by p.id desc",nativeQuery = true)
-  List<Posts> getPosts();
+  Optional<List<Posts>> getPosts();
 
   List<Posts> findAllByUserOrderByDateDesc(User user);
 }

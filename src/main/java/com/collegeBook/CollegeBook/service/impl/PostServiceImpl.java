@@ -137,6 +137,7 @@ public class PostServiceImpl implements PostService {
 
     }
 
+    @Transactional
     @Override
     public List<PostResponse> getUserPost(String username) {
 

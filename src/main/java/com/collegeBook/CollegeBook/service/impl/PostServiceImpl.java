@@ -27,10 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -143,31 +140,35 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostResponse> getUserPost(String username) {
 
-        User user = userRepository.findByUserName(username).orElseThrow(()->new AppException("User not found"));
+        User user = userRepository.findByUserName(username).orElseThrow(() -> new AppException("User not found"));
 
-        List<Posts> posts = postRepository.findAllByUserOrderByDateDesc(user);
+        List<Posts> posts = postRepository.findAllByUserOrderByDateDesc(user).orElse(Collections.emptyList());
         List<PostResponse> responses = new ArrayList<>();
 
-        for(Posts post:posts){
+        if (posts != null) {
+            for (Posts post : posts) {
 
-            List<String> roles = post.getUser().getRoles().stream().map(role->role.getName()).collect(Collectors.toList());
+                List<String> roles = post.getUser().getRoles().stream().map(role -> role.getName()).collect(Collectors.toList());
 
-            UserResponse userResponse = new UserResponse(post.getUser()
-                    .getId(),post.getUser().getFirstName(),post.getUser().getLastName(),post.getUser().getUserName(),roles);
+                UserResponse userResponse = new UserResponse(post.getUser()
+                        .getId(), post.getUser().getFirstName(), post.getUser().getLastName(), post.getUser().getUserName(), roles);
 
-            String fileUrl = null;
-            String fileType=null;
-            if (post.getFileName() != null) {
-                fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/uploads/")
-                        .path(post.getFileName())
-                        .toUriString();
-                fileType=post.getFileType();
+                String fileUrl = null;
+                String fileType = null;
+                if (post.getFileName() != null) {
+                    fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                            .path("/uploads/")
+                            .path(post.getFileName())
+                            .toUriString();
+                    fileType = post.getFileType();
+                }
+
+                responses.add(new PostResponse(post.getId(), post.getCaption(), post.getContent(), post.getDate(), userResponse, fileUrl, fileType));
             }
-
-            responses.add(new PostResponse(post.getId(),post.getCaption(),post.getContent(),post.getDate(),userResponse, fileUrl,fileType));
+            return responses;
+        } else {
+            return responses;
         }
-        return responses;
     }
 }
 

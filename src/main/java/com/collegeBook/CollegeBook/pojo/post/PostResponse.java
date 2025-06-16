@@ -20,5 +20,6 @@ public class PostResponse {
 
     private String fileUrl;
     private String fileType;
+    private String fileName;
 
 }

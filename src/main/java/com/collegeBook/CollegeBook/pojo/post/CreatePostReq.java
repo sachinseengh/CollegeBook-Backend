@@ -16,6 +16,10 @@ public class CreatePostReq {
 
     private String content;
 
+    @NotNull
+    private Boolean isNote;
 
+    private String  semester;
 
+    private String  subject;
 }

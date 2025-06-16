@@ -17,14 +17,14 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByUserName(String userName);
 
     @Query(value = "SELECT COUNT(*) > 0 FROM users u " +
-            "JOIN user_roles ur ON u.id = ur.user_id " +
+            "JOIN  user_roles ur ON u.id = ur.user_id " +
             "JOIN roles r ON r.id = ur.role_id " +
             "WHERE u.user_name = :username " +
             "AND (r.name = 'ADMIN' OR r.name='MODERATOR') ", nativeQuery = true)
     Boolean findUserWithRoleAdminOrModerator(@Param("username") String username);
 
 
-    @Query(value = "SELECT * FROM users u " +
+    @Query(value ="SELECT * FROM users u " +
             "JOIN user_roles ur ON u.id = ur.user_id " +
             "JOIN roles r ON r.id = ur.role_id " +
             "WHERE r.name =:role", nativeQuery = true)

@@ -41,7 +41,7 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
                 .antMatchers("/health-check").permitAll()
                 .antMatchers("/admin/**").hasRole(RoleEnum.ADMIN.name())
                 .antMatchers("/moderator/**").hasAnyRole(RoleEnum.ADMIN.name(),RoleEnum.MODERATOR.name())// restrict admin routes
-                .antMatchers("/user/**", "/post/**").authenticated() // only for logged-in users
+                .antMatchers("/user/**", "/post/**","/note/**").authenticated()// only for logged-in users
                 .anyRequest().authenticated() ;// everything else is open
 //                .and()
 //                .httpBasic() // basic authentication (or use .formLogin() for form-based login)
@@ -50,6 +50,8 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
         http.cors().configurationSource(corsConfigurationSource());
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().csrf().disable();
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+
     }
 
 
@@ -58,8 +60,8 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
-//            config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
-            config.setAllowedOrigins(Collections.singletonList("https://college-book.vercel.app/"));
+            config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+//            config.setAllowedOrigins(Collections.singletonList("https://college-book.vercel.app/"));
             config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Specify allowed methods
             config.setAllowCredentials(true);
             config.setAllowedHeaders(Collections.singletonList("*"));

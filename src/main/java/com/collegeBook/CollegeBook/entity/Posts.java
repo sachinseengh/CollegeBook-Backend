@@ -21,12 +21,21 @@ public class Posts {
     @GeneratedValue(generator = "post_seq_gen", strategy = GenerationType.SEQUENCE)
     private Long id;
 
+
+
+
+    //becuase later to display on feed
+    //and every post dont have note so linking post Entity with note entity is not good
+    private String semester;
+    private String subject;
+
     @Column(nullable = false)
     private String caption;
 
     private String content;
 
 
+    private Boolean isNote;
 
     private String fileName;   // Stored file name on server
     private String fileType;   // Like image/png, video/mp4

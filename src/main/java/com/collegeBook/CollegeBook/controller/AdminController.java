@@ -30,8 +30,5 @@ public class AdminController extends BaseController {
     public ResponseEntity<GlobalApiResponse> getModerators(){
         return successResponse(StringConstant.GET_MODERATOR,userService.getModerators(RoleEnum.MODERATOR.name()));
     }
-
-
-
-
+    
 }

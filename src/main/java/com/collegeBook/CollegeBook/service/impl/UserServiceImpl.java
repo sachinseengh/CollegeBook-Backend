@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -176,6 +177,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+@Transactional
     public List<UserResponse> getModerators(String roleName) {
 
         List<User> moderators = userRepository.getModerators(RoleEnum.MODERATOR.name());

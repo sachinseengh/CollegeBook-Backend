@@ -1,6 +1,7 @@
 package com.collegeBook.CollegeBook.service.impl;
 
 import com.collegeBook.CollegeBook.constant.StringConstant;
+import com.collegeBook.CollegeBook.entity.Notes;
 import com.collegeBook.CollegeBook.entity.Posts;
 import com.collegeBook.CollegeBook.entity.User;
 import com.collegeBook.CollegeBook.exception.AppException;
@@ -8,6 +9,7 @@ import com.collegeBook.CollegeBook.pojo.post.CreatePostReq;
 import com.collegeBook.CollegeBook.pojo.post.EditPostReq;
 import com.collegeBook.CollegeBook.pojo.post.PostResponse;
 import com.collegeBook.CollegeBook.pojo.user.UserResponse;
+import com.collegeBook.CollegeBook.repository.NoteRepository;
 import com.collegeBook.CollegeBook.repository.PostRepository;
 import com.collegeBook.CollegeBook.repository.UserRepository;
 import com.collegeBook.CollegeBook.service.PostService;
@@ -37,20 +39,33 @@ public class PostServiceImpl implements PostService {
     private UserRepository userRepository;
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private NoteRepository noteRepository;
 
 
     @Transactional
     @Override
     public String createPost(MultipartFile file, CreatePostReq createPostReq) throws IOException {
+
+        System.out.println(createPostReq);
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        User user = userRepository.findByUserName(authentication.getName())
+                .orElseThrow(() -> new AppException("User not Found"));
+
+
 
         Posts post = new Posts();
         post.setCaption(createPostReq.getCaption());
         post.setContent(createPostReq.getContent());
+        post.setIsNote(createPostReq.getIsNote());
 
 
+        String fileName=null;
+       String fileType=null;
         if (file != null && !file.isEmpty()) {
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
             Path uploadPath = Paths.get("uploads/");
             Files.createDirectories(uploadPath);
             Path filePath = uploadPath.resolve(fileName);
@@ -58,14 +73,33 @@ public class PostServiceImpl implements PostService {
 
             post.setFileName(fileName);
             post.setFileType(file.getContentType()); // Save file type
+
+            //i will use it to set note file type
+            fileType = file.getContentType();
+
         }
 
-        User user = userRepository.findByUserName(authentication.getName())
-                .orElseThrow(() -> new AppException("User not Found"));
+
+        Notes note = new Notes();
+        if(createPostReq.getIsNote()){
+            post.setSemester(createPostReq.getSemester());
+            post.setSubject(createPostReq.getSubject());
+            note.setDate(LocalDateTime.now());
+            note.setSemester(createPostReq.getSemester());
+            note.setSubject(createPostReq.getSubject());
+            note.setFileName(fileName);
+            note.setFileType(fileType);
+
+            note.setUser(user);
+            noteRepository.save(note);
+        }
+
 
         post.setUser(user);
         post.setDate(LocalDateTime.now());
         postRepository.save(post);
+
+
 
         return StringConstant.POST_CREATED;
     }
@@ -75,6 +109,7 @@ public class PostServiceImpl implements PostService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         User user = userRepository.findByUserName(authentication.getName()).orElseThrow(()->new AppException("User not found"));
+
         Posts post = (Posts) user.getPosts().stream().filter(x->x.getId().equals(post_id)).findFirst().orElseThrow(()->new AppException("Post not found"));
 
         if(editPostReq.getContent()!=null || editPostReq.getContent()==""){
@@ -83,6 +118,7 @@ public class PostServiceImpl implements PostService {
         if(editPostReq.getCaption()!=null || editPostReq.getCaption()==""){
             post.setCaption(editPostReq.getCaption());
         }
+
         postRepository.save(post);
 
         return StringConstant.POST_UPDATED;
@@ -90,6 +126,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public String deletePost( Long post_id) {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         User user = userRepository.findByUserName(authentication.getName()).orElseThrow(()->new AppException("Username not found"));
@@ -120,16 +157,19 @@ public class PostServiceImpl implements PostService {
 
                 String fileUrl = null;
                 String fileType = null;
+                String fileName=null;
                 if (post.getFileName() != null) {
                     fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                             .path("/uploads/")
                             .path(post.getFileName())
                             .toUriString();
                     fileType = post.getFileType();
+                    fileName=post.getFileName();
+
 
                 }
 
-                responses.add(new PostResponse(post.getId(), post.getCaption(), post.getContent(), post.getDate(), userResponse, fileUrl, fileType));
+                responses.add(new PostResponse(post.getId(), post.getCaption(), post.getContent(), post.getDate(), userResponse, fileUrl, fileType,fileName));
             }
             return responses;
         }
@@ -156,6 +196,8 @@ public class PostServiceImpl implements PostService {
 
                 String fileUrl = null;
                 String fileType = null;
+                String fileName =null;
+
                 if (post.getFileName() != null) {
                     fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                             .path("/uploads/")
@@ -164,7 +206,7 @@ public class PostServiceImpl implements PostService {
                     fileType = post.getFileType();
                 }
 
-                responses.add(new PostResponse(post.getId(), post.getCaption(), post.getContent(), post.getDate(), userResponse, fileUrl, fileType));
+                responses.add(new PostResponse(post.getId(), post.getCaption(), post.getContent(), post.getDate(), userResponse, fileUrl, fileType,fileName));
             }
             return responses;
         } else {
